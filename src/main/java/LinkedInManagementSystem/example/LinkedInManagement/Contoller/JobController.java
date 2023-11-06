@@ -27,7 +27,7 @@ public class JobController {
     @Autowired
     private JobService jobService;
 
-
+// job add by user when ever the job is added by user all his followers will get the job notification through  the mail
     @PostMapping("/addJobByUser")
     public ResponseEntity jobAddByUser(@RequestBody Job job) throws Exception{
 

@@ -10,6 +10,8 @@ import LinkedInManagementSystem.example.LinkedInManagement.Repository.CompanyRep
 import LinkedInManagementSystem.example.LinkedInManagement.Repository.JobRepository;
 import LinkedInManagementSystem.example.LinkedInManagement.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -27,15 +29,21 @@ public class JobService {
     @Autowired
     private CompanyRepository companyRepository;
 
+    @Autowired
+    private JavaMailSender mailSender;
+    @Autowired
+    private UserService userService;
 
-    public String jobAddByUser(Job job) throws Exception{
+
+
+    public String jobAddByUser(Job job) throws Exception {
 
         // get the user
 
         Optional<User> userOptional = userRepository.findById(job.getRecruiterId());
 
-        if(!userOptional.isPresent()) {
-            throw new UserIdIsInvalid(" there is no user with "+ job.getRecruiterId() + " Id");
+        if (!userOptional.isPresent()) {
+            throw new UserIdIsInvalid(" there is no user with " + job.getRecruiterId() + " Id");
         }
 
         User user = userOptional.get();
@@ -45,6 +53,26 @@ public class JobService {
         jobRepository.save(job);
         userRepository.save(user);
 
+
+        // Email Integration
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+
+        List<User> followersList = userService.allUsers(user.getUserId());
+
+        if(!followersList.isEmpty()) {
+            for (User follower : followersList) {
+
+                String body = "Hi " + follower.getUserName() + " !" + user.getUserName() + " add a job " +
+                        "you got this email because of you followed him";
+
+                mailMessage.setFrom("makasrinivasulu01@gmail.com"); // from which mail u want to send
+                mailMessage.setTo(follower.getEmail());//to which one send to mail
+                mailMessage.setSubject("New Job Added !!");//subject
+                mailMessage.setText(body);//message in the box
+
+                mailSender.send(mailMessage);
+            }
+        }
         return " Thank you so much for using linkedIn job is added successfully !";
     }
 

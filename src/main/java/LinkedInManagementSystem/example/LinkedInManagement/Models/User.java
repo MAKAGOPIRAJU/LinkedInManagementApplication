@@ -29,13 +29,11 @@ public class User {
 
     private String designation;
 
-    private Integer followers;
-
-    private Integer following;
-
     private String description;
 
     private String skills;
+
+    private String email;
 
     @Embedded
     private Education education;
@@ -64,7 +62,6 @@ public class User {
     @JsonIgnore
     List<Messages> sendMessages = new ArrayList<>();
 
-
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Like> likeList = new ArrayList<>();
@@ -72,5 +69,10 @@ public class User {
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Follow> followerList = new ArrayList<>();
+
 
 }

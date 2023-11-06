@@ -62,4 +62,17 @@ public class UserController {
         }
     }
 
+    // find all the followers of user
+    @GetMapping("/allFollowers/{userId}")
+
+    public ResponseEntity allFollowers(@PathVariable ("userId") Integer userId){
+
+        try {
+            List<User> userList = userService.allUsers(userId);
+            return new ResponseEntity(userList,HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity(e.getMessage() , HttpStatus.BAD_REQUEST);
+        }
+    }
+
 }
